@@ -23,6 +23,17 @@ def add_word_to_tree(word):
 	now_dict['word_end'] = True
 
 
+def find_word_from_tree_dict(word):
+	now_dict = tree_dict
+	for w in word:
+		if w in now_dict:
+			now_dict = now_dict[w]
+		else:
+			return False
+	if 'word_end' in now_dict:
+		return True
+
+
 if __name__ == '__main__':
 	import pprint
 	word1 = '这是一个词语a'
@@ -35,4 +46,7 @@ if __name__ == '__main__':
 		add_word_to_tree(word)
 	pp = pprint.PrettyPrinter(indent=2)
 	pp.pprint(tree_dict)
+
+	print('-----')
+	print(find_word_from_tree_dict(word6))
 
