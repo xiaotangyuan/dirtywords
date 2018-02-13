@@ -30,18 +30,28 @@ def add_word_to_tree(word):
 def find_word_from_tree_dict(content):
 	now_dict = tree_dict
 	words = []
-	for w in content:
-		res = now_dict.get(w)
-		if res is None:
-			continue
-		now_dict = res
-		words.append(w)
-		if 'word_end' in now_dict:
-			break
-	return words
+	content_str_num = len(content)
+	for index, w in enumerate(content):
+		# print('check word:', w, now_dict.get(w), bool(now_dict.get(w)))
+		while now_dict.get(w):
+			# print('in while：', index)
+			words.append(w)
+			now_dict = now_dict.get(w)
+			index += 1
+			if index > content_str_num - 1:
+				w = None
+			else:
+				w = content[index]
+			# print('next w:', w)
+			# print('now_dict:', now_dict, now_dict.get(w, {}))
+			if now_dict and len(words) > 1 and 'word_end' in now_dict:
+				return words
+		now_dict = tree_dict
+		words = []
+	return None
 
 
-if __name__ == '__main__':
+def test_find_word():
 	import pprint
 	word1 = '这是一个词语a'
 	word2 = '这是一个词语b'
@@ -55,7 +65,26 @@ if __name__ == '__main__':
 	pp.pprint(tree_dict)
 
 	print('-----')
-	content = 'ahahah啊哈这是一个内容哦'
+	content = 'ahahah啊哈这是'
 	word = find_word_from_tree_dict(content)
 	print(word)
+
+
+def load_words_data_to_tree_dict(filename):
+	with open(filename, newline='\n') as f:
+		for word in f.readlines():
+			word = word.strip()
+			word = word.replace('\n', '')
+			add_word_to_tree(word)
+
+if __name__ == '__main__':
+	filename = 'dirtywords.txt'
+	load_words_data_to_tree_dict(filename)
+
+	# test_find_word()
+	with open('content2.txt', encoding='utf-8') as f:
+		content = f.read()
+	print(len(content))
+	word = find_word_from_tree_dict(content)
+	print('got word:', word)
 
