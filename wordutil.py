@@ -1,3 +1,7 @@
+"""
+构造词组的tree和检测一个字符串内容是否包含tree中的词
+"""
+
 tree_dict = {}
 
 
@@ -23,15 +27,18 @@ def add_word_to_tree(word):
 	now_dict['word_end'] = True
 
 
-def find_word_from_tree_dict(word):
+def find_word_from_tree_dict(content):
 	now_dict = tree_dict
-	for w in word:
-		if w in now_dict:
-			now_dict = now_dict[w]
-		else:
-			return False
-	if 'word_end' in now_dict:
-		return True
+	words = []
+	for w in content:
+		res = now_dict.get(w)
+		if res is None:
+			continue
+		now_dict = res
+		words.append(w)
+		if 'word_end' in now_dict:
+			break
+	return words
 
 
 if __name__ == '__main__':
@@ -48,5 +55,7 @@ if __name__ == '__main__':
 	pp.pprint(tree_dict)
 
 	print('-----')
-	print(find_word_from_tree_dict(word6))
+	content = 'ahahah啊哈这是一个内容哦'
+	word = find_word_from_tree_dict(content)
+	print(word)
 
