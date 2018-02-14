@@ -27,8 +27,9 @@ def add_word_to_tree(word):
 	now_dict['word_end'] = True
 
 
-def find_word_from_tree_dict(content):
+def find_word_from_tree_dict(content, return_all_dirty_words=False):
 	now_dict = tree_dict
+	words_list = []
 	words = []
 	content_str_num = len(content)
 	for index, w in enumerate(content):
@@ -45,10 +46,13 @@ def find_word_from_tree_dict(content):
 			# print('next w:', w)
 			# print('now_dict:', now_dict, now_dict.get(w, {}))
 			if now_dict and len(words) > 1 and 'word_end' in now_dict:
-				return words
+				words_list.append(words.copy())
+				if return_all_dirty_words is False:
+					return words_list
+
 		now_dict = tree_dict
 		words = []
-	return None
+	return words_list
 
 
 def test_find_word():
