@@ -81,6 +81,12 @@ def load_words_data_to_tree_dict(filename):
 			word = word.replace('\n', '')
 			add_word_to_tree(word)
 
+
+def init_dirtyword_tree_dict():
+	filename = 'dirtywords.txt'
+	load_words_data_to_tree_dict(filename)
+	
+
 if __name__ == '__main__':
 	filename = 'dirtywords.txt'
 	load_words_data_to_tree_dict(filename)
