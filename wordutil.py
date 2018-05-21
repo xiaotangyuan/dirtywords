@@ -45,6 +45,7 @@ def find_word_from_tree_dict(content, return_all_dirty_words=False):
 				w = content[index]
 			# print('next w:', w)
 			# print('now_dict:', now_dict, now_dict.get(w, {}))
+			# 单个字符一般不会是敏感词，所以len(words) > 1
 			if now_dict and len(words) > 1 and 'word_end' in now_dict:
 				words_list.append(words.copy())
 				if return_all_dirty_words is False:
@@ -52,6 +53,7 @@ def find_word_from_tree_dict(content, return_all_dirty_words=False):
 
 		now_dict = tree_dict
 		words = []
+	words_list = [''.join(item) for item in words_list]
 	return words_list
 
 

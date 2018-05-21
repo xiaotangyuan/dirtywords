@@ -12,7 +12,6 @@ def checkword():
 	# content = request.form.get('content')
 	content = request.args.get('content')
 	words_list = find_word_from_tree_dict(content, return_all_dirty_words=True)
-	words_list = [''.join(item) for item in words_list]
 	return json.dumps(words_list)
 
 
