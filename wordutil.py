@@ -81,6 +81,7 @@ def load_words_data_to_tree_dict(filename):
 		for word in f.readlines():
 			word = word.strip()
 			word = word.replace('\n', '')
+			words = [w.strip() for w in words]
 			add_word_to_tree(word)
 
 
