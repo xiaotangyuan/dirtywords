@@ -13,7 +13,7 @@ wordcuple_weight_list = [
 3 遍历检查出来的敏感词，到wordcuple_weight_list核对是否有正确的组合，如果有返回敏感词词组及权重
 """
 
-
+import csv
 import wordutil
 
 
@@ -22,13 +22,13 @@ wordcuple_weight_list = []
 
 def init_wordcupleweight_info():
     filename = 'wordcupleweight.csv'
-    with open(filename, newline='\n') as f:
-        for wordsinfo in f.readlines():
-            wordsinfo = wordsinfo.strip()
-            wordsinfo = wordsinfo.replace('\n', '')
-            weight, *words = wordsinfo.split(',')
+    with open(filename) as f:
+        readCSV = csv.reader(f, delimiter=',')
+        for row in readCSV:
+            weight, words = row[0], row[1:]
             if len(words) == 0:
                 continue
+            words = [w for w in words if len(w) > 0]
             wordcuple_weight_list.append((int(weight), words))
             for word in words:
                 wordutil.add_word_to_tree(word)
