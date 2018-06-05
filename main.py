@@ -32,4 +32,6 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run()
+    import sys
+    port = sys.argv[1]
+    app.run('0.0.0.0', port=port)

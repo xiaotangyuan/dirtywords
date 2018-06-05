@@ -26,6 +26,8 @@ def init_wordcupleweight_info():
         readCSV = csv.reader(f, delimiter=',')
         for row in readCSV:
             weight, words = row[0], row[1:]
+            weight = weight.strip()
+            words = [w.strip() for w in words]
             if len(words) == 0:
                 continue
             words = [w for w in words if len(w) > 0]
