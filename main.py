@@ -1,18 +1,19 @@
 import json
 from flask import Flask, request
-from wordutil import find_word_from_tree_dict, init_dirtyword_tree_dict
+from flask import render_template
+import wordutil
 import wordcupleweight
 
 
 app = Flask(__name__)
-init_dirtyword_tree_dict()
+wordutil.init_dirtyword_tree_dict()
 
 
 @app.route('/checkwords', methods=['GET', 'POST'])
 def checkword():
     content = request.form.get('content')
     # content = request.args.get('content')
-    words_list = find_word_from_tree_dict(content, return_all_dirty_words=True)
+    words_list = wordutil.find_word_from_tree_dict(content, return_all_dirty_words=True)
     return json.dumps(words_list)
 
 @app.route('/checkcupleweightword', methods=['GET', 'POST'])
@@ -25,6 +26,13 @@ def checkcupleweightword():
     }
     return json.dumps(res)
 
+@app.route('/managewords', methods=['GET'])
+def managewords():
+    wordlib = request.form.get('wordlib')
+    lwm = wordutil.LimitWordManager()
+    datas = lwm.get_wordsinfo()
+    return render_template("managewords.html", datas=datas)
+
 
 @app.route('/hello')
 def index():
@@ -34,4 +42,4 @@ def index():
 if __name__ == '__main__':
     import sys
     port = sys.argv[1]
-    app.run('0.0.0.0', port=port)
+    app.run('0.0.0.0', port=port, debug=True)
