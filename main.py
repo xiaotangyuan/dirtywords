@@ -33,6 +33,16 @@ def managewords():
     datas = lwm.get_wordsinfo()
     return render_template("managewords.html", datas=datas)
 
+@app.route('/submitwords', methods=['POST'])
+def submitwords():
+    wordlib = request.form.get('wordlib')
+    words = request.form.get('words')
+    words = words.strip()
+    words = [w.strip() for w in words.split('\n') if w]
+    
+    res = {'status':'success'}
+    return json.dumps(res)
+
 
 @app.route('/hello')
 def index():
