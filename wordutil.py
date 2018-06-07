@@ -9,6 +9,9 @@ import sqlite3
 tree_dict = {}
 
 
+wordlibnames = ['wordlib1','wordlib2','wordlib3']
+
+
 def make_recursion_dict(word):
     the_dict = {
         'word_end': True,
@@ -129,8 +132,6 @@ class LimitWordManager(object):
         return data
 
     def get_all_words(self):
-        wordlibnames = ['wordlib1','wordlib2','wordlib3']
-        wordlibnames = ['wordlib1']
         words = []
         for wordlib in wordlibnames:
             data = self.get_wordlib(wordlib)[1]
@@ -139,11 +140,27 @@ class LimitWordManager(object):
         return words
 
 
-def init_dirtyword_tree_dict_from_sqlite():
+def add_wordlib_to_tree_dict_from_sqlite(wordlibname):
     lwm = LimitWordManager()
-    words = lwm.get_all_words()
+    words = lwm.get_wordlib(wordlibname)[1]
+    words = json.loads(words)
     for w in words:
         add_word_to_tree(w)
+
+
+def init_dirtyword_tree_dict_from_sqlite():
+    wordlibnames = ['wordlib1','wordlib2','wordlib3']
+    for wordlibname in wordlibnames:
+        add_wordlib_to_tree_dict_from_sqlite(wordlibname)
+
+
+def init_db():
+    lwm = LimitWordManager()
+    lwm.create_wordlib_table()
+    for wordlibname in wordlibnames:
+        wordjsonlist = ["刷单"]
+        wordjsonlist = json.dumps(wordjsonlist, ensure_ascii=False)
+        lwm.insert_wordlib(wordjsonlist, wordlibname)
 
 
 def test_LimitWordManager():
@@ -168,4 +185,5 @@ if __name__ == '__main__':
     # word = find_word_from_tree_dict(content)
     # print('got word:', word)
     test_LimitWordManager()
+    # init_db()
 

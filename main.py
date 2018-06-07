@@ -30,7 +30,7 @@ def checkcupleweightword():
 
 @app.route('/managewords', methods=['GET'])
 def managewords():
-    wordlib = request.form.get('wordlib')
+    wordlib = request.args.get('wordlib')
     if not wordlib:
         wordlib = 'wordlib1'
     lwm = wordutil.LimitWordManager()
@@ -38,7 +38,7 @@ def managewords():
     data = json.loads(data)
     data = [d+'\n' for d in data]
     rows = len(data) + 5
-    return render_template("managewords.html", data=data, rows=rows)
+    return render_template("managewords.html", data=data, rows=rows, wordlibname=wordlib)
 
 
 @app.route('/submitwords', methods=['POST'])
@@ -50,7 +50,7 @@ def submitwords():
     wordjsonlist = json.dumps(words, ensure_ascii=False)
     lwm = wordutil.LimitWordManager()
     lwm.update_wordlib(wordjsonlist, wordlib)
-    wordutil.init_dirtyword_tree_dict_from_sqlite()
+    wordutil.add_wordlib_to_tree_dict_from_sqlite(wordlib)
     res = {'status':'success'}
     return json.dumps(res)
 

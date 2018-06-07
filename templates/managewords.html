@@ -6,10 +6,14 @@
 </head>
 <body>
 	<div class='container'>
-		
+	<div class="btn-group" role="group" aria-label="...">
+	  <button type="button" class="btn btn-default"><a href="/managewords?wordlib=wordlib1">词库1</a></button>
+	  <button type="button" class="btn btn-default"><a href="/managewords?wordlib=wordlib2">词库2</a></button>
+	  <button type="button" class="btn btn-default"><a href="/managewords?wordlib=wordlib3">词库3</a></button>
+	</div>
 	<form role="form" action="/submitwords" id='wordform' method="post">
 	  <div class="form-group">
-	  	<input type="" name="wordlib" value="wordlib1">
+	  	<input type="hidden" name="wordlib" value="{{wordlibname}}">
 	    <textarea form="wordform" class="form-control" rows="{{rows}}" name='words'>{% for w in data %}{{w}}{% endfor %}</textarea>
 	    <button class="btn btn-default" type="submit">提交</button>
 	  </div>
