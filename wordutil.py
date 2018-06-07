@@ -145,8 +145,12 @@ def add_wordlib_to_tree_dict_from_sqlite(wordlibname):
     words = lwm.get_wordlib(wordlibname)[1]
     words = json.loads(words)
     for w in words:
-        add_word_to_tree(w)
-
+        if wordlibname == 'wordlib3':
+            for wd in w.split('；'):
+                add_word_to_tree(wd)
+        else:
+            add_word_to_tree(w)
+            
 
 def init_dirtyword_tree_dict_from_sqlite():
     wordlibnames = ['wordlib1','wordlib2','wordlib3']
