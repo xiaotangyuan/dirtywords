@@ -2,6 +2,7 @@
 构造词组的tree和检测一个字符串内容是否包含tree中的词
 """
 
+import json
 import sqlite3
 
 
@@ -101,40 +102,35 @@ class LimitWordManager(object):
         dbfilename = 'limitwords.db'
         return sqlite3.connect(dbfilename)
 
-    def create_wordweight_table(self):
+    def create_wordlib_table(self):
         c = self.conn.cursor()
-        c.execute("CREATE TABLE wordweight (ID INTEGER PRIMARY KEY AUTOINCREMENT, WORD TEXT NOT NULL UNIQUE, WEIGHT INT NOT NULL)")
+        c.execute("CREATE TABLE wordlib (ID INTEGER PRIMARY KEY AUTOINCREMENT, \
+            WORDJSONLIST TEXT NOT NULL, \
+            WORDLIBNAME TEXT NOT NULL UNIQUE)")
         self.conn.commit()
 
-    def insert_wordweight(self, word, weight):
+    def insert_wordlib(self, wordjsonlist, wordlibname):
         c = self.cursor
-        sql = "INSERT INTO wordweight (WORD,WEIGHT) \
-            VALUES ('%s', %s)" % (word, weight)
+        sql = "INSERT INTO wordlib (WORDJSONLIST, WORDLIBNAME) \
+            VALUES ('%s', '%s')" % (wordjsonlist, wordlibname)
         c.execute(sql);
         self.conn.commit()
 
-    def batch_insert_wordweight(self, wordweight_list):
+    def get_wordlib(self, wordlibname):
         c = self.cursor
-        for word, weight in wordweight_list:
-            sql = "INSERT INTO wordweight (WORD,WEIGHT) \
-                VALUES ('%s', %s)" % (word, weight)
-            c.execute(sql);
-        self.conn.commit()
-
-    def get_wordsinfo(self):
-        c = self.cursor
-        sql = "select * from wordweight"
-        datas = c.execute(sql).fetchall()
-        return datas
+        sql = "select * from wordlib where WORDLIBNAME='%s'" % wordlibname
+        data = c.execute(sql).fetchone()
+        return data
 
 
 def test_LimitWordManager():
     lwm = LimitWordManager()
-    # lwm.create_wordweight_table()
-    # word = '测试'
-    # weight = 1
-    # lwm.insert_wordweight(word, weight)
-    lwm.get_wordsinfo()
+    lwm.create_wordlib_table()
+    wordjsonlist = json.dumps(['测试3','测试4'], ensure_ascii=False)
+    wordlibname = 'wordlib2'
+    lwm.insert_wordlib(wordjsonlist, wordlibname)
+    print(lwm.get_wordlib(wordlibname))
+
 
 
 if __name__ == '__main__':
