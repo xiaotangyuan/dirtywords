@@ -55,7 +55,7 @@ def find_word_and_weight_from_tree_dict(content):
     return max_weight, words_return
 
 
-init_wordcupleweight_info()
+# init_wordcupleweight_info()
 
 
 def test():

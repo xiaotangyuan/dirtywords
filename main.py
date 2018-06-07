@@ -6,7 +6,7 @@ import wordcupleweight
 
 
 app = Flask(__name__)
-wordutil.init_dirtyword_tree_dict()
+wordutil.init_dirtyword_tree_dict_from_sqlite()
 
 
 @app.route('/checkwords', methods=['GET', 'POST'])
@@ -50,8 +50,15 @@ def submitwords():
     wordjsonlist = json.dumps(words, ensure_ascii=False)
     lwm = wordutil.LimitWordManager()
     lwm.update_wordlib(wordjsonlist, wordlib)
+    wordutil.init_dirtyword_tree_dict_from_sqlite()
     res = {'status':'success'}
     return json.dumps(res)
+
+
+@app.route('/tree', methods=['get'])
+def tree():
+    tree_json = json.dumps(wordutil.tree_dict, ensure_ascii=False)
+    return tree_json
 
 
 @app.route('/hello')
