@@ -116,6 +116,12 @@ class LimitWordManager(object):
         c.execute(sql);
         self.conn.commit()
 
+    def update_wordlib(self, wordjsonlist, wordlibname):
+        c = self.cursor
+        sql = "UPDATE wordlib SET WORDJSONLIST='%s' WHERE WORDLIBNAME='%s'" % (wordjsonlist, wordlibname) 
+        c.execute(sql);
+        self.conn.commit()
+
     def get_wordlib(self, wordlibname):
         c = self.cursor
         sql = "select * from wordlib where WORDLIBNAME='%s'" % wordlibname
@@ -125,10 +131,10 @@ class LimitWordManager(object):
 
 def test_LimitWordManager():
     lwm = LimitWordManager()
-    lwm.create_wordlib_table()
+    # lwm.create_wordlib_table()
     wordjsonlist = json.dumps(['测试3','测试4'], ensure_ascii=False)
-    wordlibname = 'wordlib2'
-    lwm.insert_wordlib(wordjsonlist, wordlibname)
+    wordlibname = 'wordlib1'
+    # lwm.insert_wordlib(wordjsonlist, wordlibname)
     print(lwm.get_wordlib(wordlibname))
 
 

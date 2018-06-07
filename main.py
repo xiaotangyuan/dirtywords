@@ -16,6 +16,7 @@ def checkword():
     words_list = wordutil.find_word_from_tree_dict(content, return_all_dirty_words=True)
     return json.dumps(words_list)
 
+
 @app.route('/checkcupleweightword', methods=['GET', 'POST'])
 def checkcupleweightword():
     content = request.form.get('content')
@@ -26,12 +27,19 @@ def checkcupleweightword():
     }
     return json.dumps(res)
 
+
 @app.route('/managewords', methods=['GET'])
 def managewords():
     wordlib = request.form.get('wordlib')
+    if not wordlib:
+        wordlib = 'wordlib1'
     lwm = wordutil.LimitWordManager()
-    datas = lwm.get_wordsinfo()
-    return render_template("managewords.html", datas=datas)
+    data = lwm.get_wordlib(wordlib)[1]
+    data = json.loads(data)
+    data = [d+'\n' for d in data]
+    rows = len(data) + 5
+    return render_template("managewords.html", data=data, rows=rows)
+
 
 @app.route('/submitwords', methods=['POST'])
 def submitwords():
@@ -39,7 +47,9 @@ def submitwords():
     words = request.form.get('words')
     words = words.strip()
     words = [w.strip() for w in words.split('\n') if w]
-    
+    wordjsonlist = json.dumps(words, ensure_ascii=False)
+    lwm = wordutil.LimitWordManager()
+    lwm.update_wordlib(wordjsonlist, wordlib)
     res = {'status':'success'}
     return json.dumps(res)
 

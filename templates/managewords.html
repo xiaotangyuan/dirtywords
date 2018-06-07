@@ -10,7 +10,7 @@
 	<form role="form" action="/submitwords" id='wordform' method="post">
 	  <div class="form-group">
 	  	<input type="" name="wordlib" value="wordlib1">
-	    <textarea form="wordform" class="form-control" rows="3" name='words'>{% for id, word, weight in datas %}{{word}}{% endfor %}</textarea>
+	    <textarea form="wordform" class="form-control" rows="{{rows}}" name='words'>{% for w in data %}{{w}}{% endfor %}</textarea>
 	    <button class="btn btn-default" type="submit">提交</button>
 	  </div>
 	</form> 
