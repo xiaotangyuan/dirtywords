@@ -193,14 +193,15 @@ def filter_dirtywords_in_lib(words_list):
     for wordlibname in wordlibnames:
         set_list = get_words_set_from_lib(wordlibname)
         # print(wordlibname, set_list)
-        for s in set_list:
-            dirtywords = check_words_set & s
-            if (dirtywords):
-                if wordlibname != 'wordlib3':
-                    return wordlibname, dirtywords
-                else:
-                    if dirtywords == s:
-                        return wordlibname, dirtywords
+        if wordlibname in ['wordlib1', 'wordlib2']:
+            shootwords = check_words_set & set_list[0]
+            if len(shootwords) > 1:
+                return wordlibname, shootwords
+        else:
+            for s in set_list:
+                shootwords = check_words_set & s
+                if shootwords == s:
+                    return wordlibname, shootwords
     return None, set()
 
 
