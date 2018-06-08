@@ -4,6 +4,7 @@
 
 import json
 import sqlite3
+from functools import lru_cache
 
 
 tree_dict = {}
@@ -167,6 +168,48 @@ def init_db():
         lwm.insert_wordlib(wordjsonlist, wordlibname)
 
 
+@lru_cache(maxsize=3)
+def get_words_set_from_lib(wordlibname):
+    lwm = LimitWordManager()
+    data = lwm.get_wordlib(wordlibname)[1]
+    set_list = []
+    wordlist = json.loads(data)
+    if wordlibname == 'wordlib3':
+        for wline in wordlist:
+            wset = set()
+            for wd in wline.split('；'):
+                wset.add(wd)
+            set_list.append(wset)
+    else:
+        wset = set()
+        for wline in wordlist:
+            wset.add(wline)
+        set_list.append(wset)
+    return set_list
+
+
+def filter_dirtywords_in_lib(words_list):
+    check_words_set = set(words_list)
+    for wordlibname in wordlibnames:
+        set_list = get_words_set_from_lib(wordlibname)
+        # print(wordlibname, set_list)
+        for s in set_list:
+            dirtywords = check_words_set & s
+            if (dirtywords):
+                if wordlibname != 'wordlib3':
+                    return wordlibname, dirtywords
+                else:
+                    if dirtywords == s:
+                        return wordlibname, dirtywords
+    return None, set()
+
+
+def test_filter_dirtywords_in_lib():
+    words_list = ['刷2单','信用卡','秒杀', 'ADIDAS']
+    wordlibname, dirtywords = filter_dirtywords_in_lib(words_list)
+    print('got:', wordlibname, dirtywords)
+
+
 def test_LimitWordManager():
     lwm = LimitWordManager()
     # lwm.create_wordlib_table()
@@ -188,6 +231,8 @@ if __name__ == '__main__':
     # print(len(content))
     # word = find_word_from_tree_dict(content)
     # print('got word:', word)
-    test_LimitWordManager()
+    # test_LimitWordManager()
     # init_db()
+
+    test_filter_dirtywords_in_lib()
 
