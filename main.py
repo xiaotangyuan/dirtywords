@@ -11,10 +11,18 @@ wordutil.init_dirtyword_tree_dict_from_sqlite()
 
 @app.route('/checkwords', methods=['GET', 'POST'])
 def checkword():
-    content = request.form.get('content')
-    # content = request.args.get('content')
-    words_list = wordutil.find_word_from_tree_dict(content, return_all_dirty_words=True)
-    return json.dumps(words_list)
+    if request.method == 'POST':
+        content = request.form.get('content')
+        # content = request.args.get('content')
+        words_list = wordutil.find_word_from_tree_dict(content, return_all_dirty_words=True)
+        wordlibname, shootwords = wordutil.filter_dirtywords_in_lib(words_list)
+        res = {
+            'wordlibname': wordlibname,
+            'shootwords': list(shootwords),
+        }
+        return json.dumps(res, ensure_ascii=False)
+    else:
+        return render_template("inputtext.html")
 
 
 @app.route('/checkcupleweightword', methods=['GET', 'POST'])
