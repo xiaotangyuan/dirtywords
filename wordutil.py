@@ -155,6 +155,8 @@ def add_wordlib_to_tree_dict_from_sqlite(wordlibname):
 
 def init_dirtyword_tree_dict_from_sqlite():
     wordlibnames = ['wordlib1','wordlib2','wordlib3']
+    global tree_dict
+    tree_dict = {}
     for wordlibname in wordlibnames:
         add_wordlib_to_tree_dict_from_sqlite(wordlibname)
 

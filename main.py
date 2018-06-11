@@ -58,7 +58,8 @@ def submitwords():
     wordjsonlist = json.dumps(words, ensure_ascii=False)
     lwm = wordutil.LimitWordManager()
     lwm.update_wordlib(wordjsonlist, wordlib)
-    wordutil.add_wordlib_to_tree_dict_from_sqlite(wordlib)
+    wordutil.init_dirtyword_tree_dict_from_sqlite()
+    # wordutil.add_wordlib_to_tree_dict_from_sqlite(wordlib)
     # res = {'status':'success'}
     # return json.dumps(res)
     return redirect(url_for('managewords')+'?wordlib=%s' % wordlib)
