@@ -1,5 +1,5 @@
 import json
-from flask import Flask, request
+from flask import Flask, request, redirect, url_for
 from flask import render_template
 import wordutil
 import wordcupleweight
@@ -59,8 +59,9 @@ def submitwords():
     lwm = wordutil.LimitWordManager()
     lwm.update_wordlib(wordjsonlist, wordlib)
     wordutil.add_wordlib_to_tree_dict_from_sqlite(wordlib)
-    res = {'status':'success'}
-    return json.dumps(res)
+    # res = {'status':'success'}
+    # return json.dumps(res)
+    return redirect(url_for('managewords')+'?wordlib=%s' % wordlib)
 
 
 @app.route('/tree', methods=['get'])
