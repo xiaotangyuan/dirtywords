@@ -1,8 +1,18 @@
 import json
+import logging
 from flask import Flask, request, redirect, url_for
 from flask import render_template
 import wordutil
 import wordcupleweight
+
+
+import logging
+logfile = 'checkword.log'
+logging.basicConfig(filename=logfile,
+                    format='%(asctime)s -%(name)s-%(levelname)s-%(module)s:%(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S',
+                    level=logging.DEBUG)
+log = logging
 
 
 app = Flask(__name__)
@@ -13,6 +23,8 @@ wordutil.init_dirtyword_tree_dict_from_sqlite()
 def checkword():
     if request.method == 'POST':
         content = request.form.get('content')
+        pid = request.form.get('pid')
+        log.info('[content] %s' % content)
         # content = request.args.get('content')
         words_list = wordutil.find_word_from_tree_dict(content, return_all_dirty_words=True)
         wordlibname, shootwords = wordutil.filter_dirtywords_in_lib(words_list)
@@ -20,7 +32,9 @@ def checkword():
             'wordlibname': wordlibname,
             'shootwords': list(shootwords),
         }
-        return json.dumps(res, ensure_ascii=False)
+        res = json.dumps(res, ensure_ascii=False)
+        log.info('[result] %s %s' % (pid, res))
+        return res
     else:
         return render_template("inputtext.html")
 
