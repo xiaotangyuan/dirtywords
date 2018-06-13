@@ -122,8 +122,8 @@ class LimitWordManager(object):
 
     def update_wordlib(self, wordjsonlist, wordlibname):
         c = self.cursor
-        sql = "UPDATE wordlib SET WORDJSONLIST='%s' WHERE WORDLIBNAME='%s'" % (wordjsonlist, wordlibname) 
-        c.execute(sql);
+        sql = "UPDATE wordlib SET WORDJSONLIST=(?) WHERE WORDLIBNAME=(?)"
+        c.execute(sql, (wordjsonlist, wordlibname));
         self.conn.commit()
 
     def get_wordlib(self, wordlibname):
