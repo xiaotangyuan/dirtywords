@@ -6,6 +6,7 @@ from flask import render_template
 import flask_login
 import wordutil
 import wordcupleweight
+import services
 
 
 import logging

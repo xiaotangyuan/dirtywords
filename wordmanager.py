@@ -1,5 +1,5 @@
 """
-管理敏感词
+管理检测逻辑
 """
 
 
@@ -10,6 +10,9 @@ class WordManager:
 	def __init__(self, words_list):
 		self.words_list = words_list
 		self.tree_dict = {}
+
+	def set_tree_dict(self, tree_dict):
+		self.tree_dict = tree_dict
 
 	def init_tree_dict(self, words_list=None):
 		if words_list is None:
@@ -39,9 +42,6 @@ class WordManager:
 	        now_dict = now_dict[w]
 	    now_dict['word_end'] = True
 
-	def set_tree_dict(self, tree_dict):
-		self.tree_dict = tree_dict
-
 	def find_word_from_tree_dict(self, content, return_all_dirty_words=False):
 	    now_dict = self.tree_dict
 	    words_list = []
@@ -68,3 +68,4 @@ class WordManager:
 	        words = []
 	    words_list = [''.join(item) for item in words_list]
 	    return words_list
+
