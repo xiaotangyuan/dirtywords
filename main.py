@@ -125,12 +125,18 @@ def checkcupleweightword():
 @app.route('/managewords', methods=['GET'])
 @flask_login.login_required
 def managewords():
+    current_user = flask_login.current_user
     wordlib = request.args.get('wordlib')
     if not wordlib:
         wordlib = 'wordlib1'
-    lwm = wordutil.LimitWordManager()
-    data = lwm.get_wordlib(wordlib)[1]
-    data = json.loads(data)
+    # lwm = wordutil.LimitWordManager()
+    # data = lwm.get_wordlib(wordlib)[1]
+    sw = services.WordLibService()
+    wordlibobj = sw.get_wordlib(current_user.id, wordlib)
+    if wordlibobj:
+        data = json.loads(wordlibobj.wordjsonlist)
+    else:
+        data = []
     data = [d+'\n' for d in data]
     rows = len(data) + 5
     return render_template("managewords.html", data=data, rows=rows, wordlibname=wordlib)
@@ -139,13 +145,16 @@ def managewords():
 @app.route('/submitwords', methods=['POST'])
 @flask_login.login_required
 def submitwords():
+    user_id = flask_login.current_user.id
     wordlib = request.form.get('wordlib')
     words = request.form.get('words')
     words = words.strip()
     words = [w.strip() for w in words.split('\n') if w]
     wordjsonlist = json.dumps(words, ensure_ascii=False)
-    lwm = wordutil.LimitWordManager()
-    lwm.update_wordlib(wordjsonlist, wordlib)
+    sw = services.WordLibService()
+    sw.update(user_id, wordlib, wordjsonlist)
+    # lwm = wordutil.LimitWordManager()
+    # lwm.update_wordlib(wordjsonlist, wordlib)
     wordutil.init_dirtyword_tree_dict_from_sqlite()
     # wordutil.add_wordlib_to_tree_dict_from_sqlite(wordlib)
     # res = {'status':'success'}

@@ -31,11 +31,35 @@ class MemberService:
         return Member.query.filter_by(id=member_id).first()
 
 
+class WordLibService:
+
+    def create(self, user_id, wordlibname, wordjsonlist):
+        wl = WordLib(userid=user_id, wordlibname=wordlibname, wordjsonlist=wordjsonlist, created_date=datetime.datetime.utcnow())
+        db.session.add(wl)
+        db.session.commit()
+
+    def delete(self, user_id, wordlibname):
+        wl = WordLib(userid=user_id, wordlibname=wordlibname)
+        db.session.add(wl)
+        db.session.commit()
+
+    def get_wordlib(self, user_id, wordlibname):
+        wl = WordLib.query.filter_by(userid=user_id, wordlibname=wordlibname).first()
+        return wl
+
+    def update(self, user_id, wordlibname, wordjsonlist):
+        wl = self.get_wordlib(user_id, wordlibname)
+        if wl:
+            wl.wordjsonlist = wordjsonlist
+            db.session.commit()
+        else:
+            self.create(user_id, wordlibname, wordjsonlist)
+
 if __name__ == '__main__':
     db.create_all()
-    ms = MemberService()
-    email = 'yt.luo@idiaoyan.com'
-    password = '123456'
-    # ms.create(email, password)
-    member = ms.get_member_by_email(email)
-    print(member)
+    # ms = MemberService()
+    # email = 'yt.luo@idiaoyan.com'
+    # password = '123456'
+    # # ms.create(email, password)
+    # member = ms.get_member_by_email(email)
+    # print(member)

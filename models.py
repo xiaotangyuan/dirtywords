@@ -33,4 +33,5 @@ class WordLib(db.Model):
     wordlibname = db.Column(db.String(120), nullable=False)
     wordjsonlist = db.Column(db.Text, nullable=False)
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
+    created_date = db.Column(db.DateTime, nullable=False)
 
