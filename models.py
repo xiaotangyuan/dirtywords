@@ -1,3 +1,4 @@
+import json
 import datetime
 import flask_login
 from main import db
@@ -34,4 +35,13 @@ class WordLib(db.Model):
     wordjsonlist = db.Column(db.Text, nullable=False)
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
     created_date = db.Column(db.DateTime, nullable=False)
+
+    def get_words_list(self):
+        words = json.loads(self.wordjsonlist)
+        if self.wordlibname in ['wordlib1', 'wordlib2']:
+            return words
+        words_list = []
+        for w_line in words:
+            words_list += w_line.split('；')
+        return words_list
 

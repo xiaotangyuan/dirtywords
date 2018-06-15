@@ -1,6 +1,9 @@
 import hashlib
+import json
+from functools import lru_cache
 import datetime
 from models import Member, WordLib, db
+from wordmanager import WordManager
 
 
 def md5(astring):
@@ -30,6 +33,9 @@ class MemberService:
     def get_member_by_id(self, member_id):
         return Member.query.filter_by(id=member_id).first()
 
+    def get_member_by_openid(self, openid):
+        return Member.query.filter_by(openid=openid).first()
+
 
 class WordLibService:
 
@@ -54,6 +60,65 @@ class WordLibService:
             db.session.commit()
         else:
             self.create(user_id, wordlibname, wordjsonlist)
+
+
+@lru_cache(maxsize=100)
+def get_wordlib3_wordset(user_id):
+    ws = WordLibService()
+    wl = ws.get_wordlib(user_id, 'wordlib3')
+    wordset_list = []
+    for w_line in json.loads(wl.wordjsonlist):
+        wordset_list.append(set(w_line.split('；')))
+    return wordset_list
+
+
+def get_dirty_words_in_wordlib3(dirtywords, user_id):
+    wordset_list = get_wordlib3_wordset(user_id)
+    dirtywords_set = set(dirtywords)
+    for wordset in wordset_list:
+        shootwords = dirtywords_set & wordset
+        if shootwords == wordset:
+            return dirtywords
+    return []
+
+
+@lru_cache(maxsize=100)
+def get_tree_dict_for_wordlib(user_id, wordlibname):
+    ws = WordLibService()
+    wl = ws.get_wordlib(user_id, wordlibname)
+    if not wl:
+        return {}
+    words = wl.get_words_list()
+    wm = WordManager(words)
+    tree_dict = wm.init_tree_dict()
+    return tree_dict, words
+
+
+def get_dirtywords_in_wordlib(content, user_id, wordlibname):
+    tree_dict, words = get_tree_dict_for_wordlib(user_id, wordlibname)
+    if not tree_dict:
+        return []
+    # print('got tree',tree_dict)
+    wm = WordManager()
+    wm.set_tree_dict(tree_dict)
+    dirtywords_list = wm.find_word_from_tree_dict(content, return_all_dirty_words=True)
+    if wordlibname == 'wordlib1':
+        return dirtywords_list
+    if wordlibname == 'wordlib2':
+        if len(dirtywords_list) >= 2:
+            return dirtywords_list
+        else:
+            return []
+    if wordlibname == 'wordlib3':
+        return get_dirty_words_in_wordlib3(dirtywords_list, user_id)
+
+
+def get_dirtywords_in_wordlibs(content, user_id, wordlibnames):
+    dirtywords_list = []
+    for wordlibname in wordlibnames:
+        dirtywords_list += get_dirtywords_in_wordlib(content, user_id, wordlibname)
+    return dirtywords_list
+
 
 if __name__ == '__main__':
     db.create_all()

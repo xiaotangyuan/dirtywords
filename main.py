@@ -89,22 +89,57 @@ def logout():
     return 'Logged out'
 
 
-@app.route('/checkwords', methods=['GET', 'POST'])
-@flask_login.login_required
+@app.route('/checkwords', methods=['POST'])
 def checkword():
+    content = request.form.get('content')
+    origin_id = request.form.get('origin_id')
+    wordlibs = request.form.get('wordlibs')
+    openid = request.form.get('openid')
+
+    log.info('[content] %s, %s' % (openid, content))
+
+    ms = services.MemberService()
+    member = ms.get_member_by_openid(openid)
+    if not member:
+        return 'bad openid: %s' % openid
+    if not wordlibs:
+        wordlibs = ['wordlib1', 'wordlib2', 'wordlib3']
+    else:
+        wordlibs = wordlibs.split(',')
+
+    words = services.get_dirtywords_in_wordlibs(content, member.id, wordlibs)
+    res = {
+        'wordlibs': wordlibs,
+        'shootwords': words
+    }
+    res = json.dumps(res, ensure_ascii=False)
+    return res
+
+
+@app.route('/testcheckwords', methods=['GET', 'POST'])
+@flask_login.login_required
+def testcheckwords():
     if request.method == 'POST':
         content = request.form.get('content')
-        pid = request.form.get('pid')
+        origin_id = request.form.get('origin_id')
+        wordlibs = request.form.get('wordlibs')
+        openid = flask_login.current_user.openid
+
         log.info('[content] %s' % content)
-        # content = request.args.get('content')
-        words_list = wordutil.find_word_from_tree_dict(content, return_all_dirty_words=True)
-        wordlibname, shootwords = wordutil.filter_dirtywords_in_lib(words_list)
+
+        ms = services.MemberService()
+        member = ms.get_member_by_openid(openid)
+        if not member:
+            return 'bad openid: %s' % openid 
+        if not wordlibs:
+            wordlibs = ['wordlib1', 'wordlib2', 'wordlib3']
+
+        words = services.get_dirtywords_in_wordlibs(content, member.id, wordlibs)
         res = {
-            'wordlibname': wordlibname,
-            'shootwords': list(shootwords),
+            'wordlibs': wordlibs,
+            'shootwords': words
         }
         res = json.dumps(res, ensure_ascii=False)
-        log.info('[result] %s %s' % (pid, res))
         return res
     else:
         return render_template("inputtext.html")
@@ -139,7 +174,7 @@ def managewords():
         data = []
     data = [d+'\n' for d in data]
     rows = len(data) + 5
-    return render_template("managewords.html", data=data, rows=rows, wordlibname=wordlib)
+    return render_template("managewords.html", data=data, rows=rows, wordlibname=wordlib, current_user=current_user)
 
 
 @app.route('/submitwords', methods=['POST'])
@@ -177,4 +212,9 @@ def index():
 if __name__ == '__main__':
     import sys
     port = sys.argv[1]
-    app.run('0.0.0.0', port=port, debug=True)
+    debug = sys.argv[2]
+    if debug == 'False':
+        debug = False
+    else:
+        debug = True
+    app.run('0.0.0.0', port=port, debug=debug)

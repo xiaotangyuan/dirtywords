@@ -7,7 +7,7 @@ class WordManager:
 	"""
 	构建tree, 查找敏感词
 	"""
-	def __init__(self, words_list):
+	def __init__(self, words_list=None):
 		self.words_list = words_list
 		self.tree_dict = {}
 
@@ -19,6 +19,7 @@ class WordManager:
 			words_list = self.words_list
 		for w in words_list:
 			self.add_word_to_tree(w)
+		return self.tree_dict
 
 	def make_recursion_dict(self, word):
 	    the_dict = {
@@ -36,7 +37,7 @@ class WordManager:
 	    now_dict = self.tree_dict
 	    for index, w in enumerate(word):
 	        if w not in now_dict:
-	            d = make_recursion_dict(word[index+1:])
+	            d = self.make_recursion_dict(word[index+1:])
 	            now_dict[w] = d
 	            return
 	        now_dict = now_dict[w]
@@ -62,6 +63,7 @@ class WordManager:
 	            if now_dict and len(words) > 1 and 'word_end' in now_dict:
 	                words_list.append(words.copy())
 	                if return_all_dirty_words is False:
+	                    words_list = [''.join(item) for item in words_list]
 	                    return words_list
 
 	        now_dict = self.tree_dict

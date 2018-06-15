@@ -6,10 +6,11 @@
 </head>
 <body>
 	<div class='container'>
+		<div><h3><span>{{current_user.email}}</span></h3></div>
 	<ul class="nav nav-tabs">
 	  <li role="presentation" class="active"><a href="/managewords">词库管理</a></li>
 	  <li role="presentation"><a href="/checkwords">敏感词测试</a></li>
-	  <li role="presentation"><a href="/tree">tree</a></li>
+	  <li role="presentation"><a href="/logout">退出登录</a></li>
 	</ul>
 	<h1>当前词库：{{wordlibname}}</h1>
 	<div class="btn-group" role="group" aria-label="...">
