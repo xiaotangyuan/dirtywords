@@ -13,7 +13,6 @@ def gen_useropenid(email):
 
 
 class MemberService:
-
     def get_password_md5(self, password):
         return md5(password)
 
@@ -25,10 +24,18 @@ class MemberService:
         db.session.add(member)
         db.session.commit()
 
+    def get_member_by_email(self, email):
+        return Member.query.filter_by(email=email).first()
+
+    def get_member_by_id(self, member_id):
+        return Member.query.filter_by(id=member_id).first()
+
 
 if __name__ == '__main__':
     db.create_all()
     ms = MemberService()
     email = 'yt.luo@idiaoyan.com'
     password = '123456'
-    ms.create(email, password)
+    # ms.create(email, password)
+    member = ms.get_member_by_email(email)
+    print(member)

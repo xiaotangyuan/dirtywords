@@ -1,8 +1,9 @@
-import json
+import json, os
 import logging
 import flask
 from flask import Flask, request, redirect, url_for
 from flask import render_template
+from flask_sqlalchemy import SQLAlchemy
 import flask_login
 import wordutil
 import wordcupleweight
@@ -20,41 +21,41 @@ log = logging
 
 app = Flask(__name__)
 app.secret_key = 'dirtywordscheckerkey'
+
+filepath = os.path.dirname(os.path.abspath(__file__))
+dbfile = os.path.join(filepath, 'dirtywords.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////%s' % dbfile
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
 wordutil.init_dirtyword_tree_dict_from_sqlite()
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
-users = {'yt.luo@idiaoyan.com': {'password': 'IDY123456'}}
-
-
-class User(flask_login.UserMixin):
-    pass
 
 
 @login_manager.user_loader
-def user_loader(email):
-    if email not in users:
-        return
-
-    user = User()
-    user.id = email
-    return user
+def user_loader(user_id):
+    ms = services.MemberService()
+    member = ms.get_member_by_id(user_id)
+    # print(user_id, member)
+    return member
 
 
-@login_manager.request_loader
-def request_loader(request):
-    email = request.form.get('email')
-    if email not in users:
-        return
+# @login_manager.request_loader
+# def request_loader(request):
+#     email = request.form.get('email')
+#     if email not in users:
+#         return
 
-    user = User()
-    user.id = email
+#     user = User()
+#     user.id = email
 
-    # DO NOT ever store passwords in plaintext and always compare password
-    # hashes using constant-time comparison!
-    user.is_authenticated = request.form['password'] == users[email]['password']
+#     # DO NOT ever store passwords in plaintext and always compare password
+#     # hashes using constant-time comparison!
+#     user.is_authenticated = request.form['password'] == users[email]['password']
 
-    return user
+#     return user
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -67,13 +68,17 @@ def login():
                 <input type='submit' name='submit'/>
                </form>
                '''
-
     email = flask.request.form['email']
-    if flask.request.form['password'] == users[email]['password']:
-        user = User()
-        user.id = email
-        flask_login.login_user(user)
-        return flask.redirect(flask.url_for('managewords'))
+    password = flask.request.form['password']
+    email = email.strip()
+    if email:
+        member = services.Member.query.filter_by(email=email).first()
+    if member:
+        ms = services.MemberService()
+        pw_md5 = ms.get_password_md5(password)
+        if pw_md5 == member.password:
+            flask_login.login_user(member)
+            return flask.redirect(flask.url_for('managewords'))
 
     return 'Bad login'
 
