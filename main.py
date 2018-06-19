@@ -7,7 +7,6 @@ from flask_sqlalchemy import SQLAlchemy
 import flask_login
 import wordutil
 import wordcupleweight
-import services
 
 
 import logging
@@ -22,13 +21,8 @@ log = logging
 app = Flask(__name__)
 app.secret_key = 'dirtywordscheckerkey'
 
-filepath = os.path.dirname(os.path.abspath(__file__))
-dbfile = os.path.join(filepath, 'dirtywords.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////%s' % dbfile
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+import services
 
-wordutil.init_dirtyword_tree_dict_from_sqlite()
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
