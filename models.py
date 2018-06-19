@@ -3,14 +3,7 @@ import json
 import datetime
 import flask_login
 from flask_sqlalchemy import SQLAlchemy
-from main import app
-
-
-filepath = os.path.dirname(os.path.abspath(__file__))
-dbfile = os.path.join(filepath, 'dirtywords.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////%s' % dbfile
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+from main import db
 
 
 class Member(flask_login.UserMixin, db.Model):

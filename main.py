@@ -21,6 +21,13 @@ log = logging
 app = Flask(__name__)
 app.secret_key = 'dirtywordscheckerkey'
 
+filepath = os.path.dirname(os.path.abspath(__file__))
+dbfile = os.path.join(filepath, 'dirtywords.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////%s' % dbfile
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+
 import services
 
 
