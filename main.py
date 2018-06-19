@@ -5,7 +5,6 @@ from flask import Flask, request, redirect, url_for
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
 import flask_login
-import wordutil
 import wordcupleweight
 
 
@@ -165,8 +164,6 @@ def managewords():
     wordlib = request.args.get('wordlib')
     if not wordlib:
         wordlib = 'wordlib1'
-    # lwm = wordutil.LimitWordManager()
-    # data = lwm.get_wordlib(wordlib)[1]
     sw = services.WordLibService()
     wordlibobj = sw.get_wordlib(current_user.id, wordlib)
     if wordlibobj:
@@ -189,20 +186,14 @@ def submitwords():
     wordjsonlist = json.dumps(words, ensure_ascii=False)
     sw = services.WordLibService()
     sw.update(user_id, wordlib, wordjsonlist)
-    # lwm = wordutil.LimitWordManager()
-    # lwm.update_wordlib(wordjsonlist, wordlib)
-    wordutil.init_dirtyword_tree_dict_from_sqlite()
-    # wordutil.add_wordlib_to_tree_dict_from_sqlite(wordlib)
-    # res = {'status':'success'}
-    # return json.dumps(res)
     return redirect(url_for('managewords')+'?wordlib=%s' % wordlib)
 
 
-@app.route('/tree', methods=['get'])
-@flask_login.login_required
-def tree():
-    tree_json = json.dumps(wordutil.tree_dict, ensure_ascii=False)
-    return tree_json
+# @app.route('/tree', methods=['get'])
+# @flask_login.login_required
+# def tree():
+#     tree_json = json.dumps(wordutil.tree_dict, ensure_ascii=False)
+#     return tree_json
 
 
 @app.route('/hello')
