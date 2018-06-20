@@ -96,7 +96,7 @@ def checkword():
     wordlibs = request.form.get('wordlibs')
     openid = request.form.get('openid')
 
-    log.info('[content] %s, %s' % (openid, content))
+    log.info('[content] %s, %s, %s' % (openid, origin_id, content))
 
     ms = services.MemberService()
     member = ms.get_member_by_openid(openid)
