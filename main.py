@@ -58,7 +58,7 @@ def user_loader(user_id):
 #     return user
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/dwuserlogin', methods=['GET', 'POST'])
 def login():
     if flask.request.method == 'GET':
         return '''
