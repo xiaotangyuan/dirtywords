@@ -201,6 +201,11 @@ def index():
     return 'hello'
 
 
+@app.errorhandler(500)
+def page_error(e):
+    log.error('%s' % e)
+    return "this page is error.", 500
+
 if __name__ == '__main__':
     import sys
     port = sys.argv[1]
