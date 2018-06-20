@@ -68,17 +68,23 @@ def get_wordlib3_wordset(user_id):
     wl = ws.get_wordlib(user_id, 'wordlib3')
     wordset_list = []
     for w_line in json.loads(wl.wordjsonlist):
-        wordset_list.append(set(w_line.split('；')))
+        w_line_set = set()
+        for w in w_line.split('；'):
+            if w:
+                w_line_set.add(w)
+        wordset_list.append(w_line_set)
     return wordset_list
 
 
 def get_dirty_words_in_wordlib3(dirtywords, user_id):
+    # print('got dirtywords lib3:', dirtywords)
     wordset_list = get_wordlib3_wordset(user_id)
     dirtywords_set = set(dirtywords)
     for wordset in wordset_list:
         shootwords = dirtywords_set & wordset
+        # print('check:', dirtywords_set, wordset, shootwords)
         if shootwords == wordset:
-            return dirtywords
+            return shootwords
     return []
 
 

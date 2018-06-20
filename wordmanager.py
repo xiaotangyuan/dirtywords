@@ -34,6 +34,8 @@ class WordManager:
 	def add_word_to_tree(self, word):
 	    word = word.strip()
 	    word = word.replace('\n', '')
+	    if not word:
+	    	return
 	    now_dict = self.tree_dict
 	    for index, w in enumerate(word):
 	        if w not in now_dict:
