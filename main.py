@@ -62,7 +62,7 @@ def user_loader(user_id):
 def login():
     if flask.request.method == 'GET':
         return '''
-               <form action='login' method='POST'>
+               <form action='' method='POST'>
                 <input type='text' name='email' id='email' placeholder='email'/>
                 <input type='password' name='password' id='password' placeholder='password'/>
                 <input type='submit' name='submit'/>
