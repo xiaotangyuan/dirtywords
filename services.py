@@ -80,12 +80,13 @@ def get_dirty_words_in_wordlib3(dirtywords, user_id):
     # print('got dirtywords lib3:', dirtywords)
     wordset_list = get_wordlib3_wordset(user_id)
     dirtywords_set = set(dirtywords)
+    res = []
     for wordset in wordset_list:
         shootwords = dirtywords_set & wordset
         # print('check:', dirtywords_set, wordset, shootwords)
         if shootwords == wordset:
-            return shootwords
-    return []
+            res.extend(list(shootwords))
+    return res
 
 
 @lru_cache(maxsize=100)
