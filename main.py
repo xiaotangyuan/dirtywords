@@ -107,12 +107,8 @@ def checkword():
     else:
         wordlibs = wordlibs.split(',')
 
-    words = services.get_dirtywords_in_wordlibs(content, member.id, wordlibs)
-    res = {
-        'wordlibs': wordlibs,
-        'shootwords': words
-    }
-    res = json.dumps(res, ensure_ascii=False)
+    words_dict = services.get_dirtywords_in_wordlibs(content, member.id, wordlibs)
+    res = json.dumps(words_dict, ensure_ascii=False)
     return res
 
 
@@ -134,12 +130,9 @@ def testcheckwords():
         if not wordlibs:
             wordlibs = ['wordlib1', 'wordlib2', 'wordlib3']
 
-        words = services.get_dirtywords_in_wordlibs(content, member.id, wordlibs)
-        res = {
-            'wordlibs': wordlibs,
-            'shootwords': words
-        }
-        res = json.dumps(res, ensure_ascii=False)
+        words_dict = services.get_dirtywords_in_wordlibs(content, member.id, wordlibs)
+        print('words_dict:', words_dict)
+        res = json.dumps(words_dict, ensure_ascii=False)
         return res
     else:
         return render_template("inputtext.html")

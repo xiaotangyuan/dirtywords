@@ -120,10 +120,12 @@ def get_dirtywords_in_wordlib(content, user_id, wordlibname):
 
 
 def get_dirtywords_in_wordlibs(content, user_id, wordlibnames):
-    dirtywords_list = []
+    dirtywords_dict = {}
     for wordlibname in wordlibnames:
-        dirtywords_list += get_dirtywords_in_wordlib(content, user_id, wordlibname)
-    return dirtywords_list
+        words = get_dirtywords_in_wordlib(content, user_id, wordlibname)
+        if len(words) >= 1:
+            dirtywords_dict[wordlibname] = list(words)
+    return dirtywords_dict
 
 
 if __name__ == '__main__':
