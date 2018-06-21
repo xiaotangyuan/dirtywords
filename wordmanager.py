@@ -61,8 +61,8 @@ class WordManager:
 	                w = None
 	            else:
 	                w = content[index]
-	            # 单个字符一般不会是敏感词，所以len(words) > 1
-	            if now_dict and len(words) > 1 and 'word_end' in now_dict:
+	            # 单个字符也可能是敏感词，所以len(words) >= 1
+	            if now_dict and len(words) >= 1 and 'word_end' in now_dict:
 	                words_list.append(words.copy())
 	                if return_all_dirty_words is False:
 	                    words_list = [''.join(item) for item in words_list]
