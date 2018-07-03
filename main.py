@@ -179,6 +179,7 @@ def submitwords():
     wordjsonlist = json.dumps(words, ensure_ascii=False)
     sw = services.WordLibService()
     sw.update(user_id, wordlib, wordjsonlist)
+    services.get_tree_dict_for_wordlib.cache_clear()
     return redirect(url_for('managewords')+'?wordlib=%s' % wordlib)
 
 
