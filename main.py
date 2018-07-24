@@ -180,6 +180,8 @@ def submitwords():
     sw = services.WordLibService()
     sw.update(user_id, wordlib, wordjsonlist)
     services.get_tree_dict_for_wordlib.cache_clear()
+    if wordlib == 'wordlib3':
+        services.get_wordlib3_wordset.cache_clear()
     return redirect(url_for('managewords')+'?wordlib=%s' % wordlib)
 
 
